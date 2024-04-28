@@ -1,0 +1,4 @@
+Restaurant: Spicy N Heat Isan Sabb
+Item: Kimchi Jjigae
+Price: 149฿
+Thank you for your purchase!

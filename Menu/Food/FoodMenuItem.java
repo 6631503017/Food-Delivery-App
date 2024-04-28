@@ -8,6 +8,7 @@ public class FoodMenuItem extends MenuItem{
         WESTERN,
         THAI,
         JAPANESE,
+        KOREA,
         NONE
     }
 

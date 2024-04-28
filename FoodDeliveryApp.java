@@ -35,17 +35,22 @@ public class FoodDeliveryApp {
         // SpicyNHeat setup
         ArrayList<MenuItem> spicyNHeatMenu = new ArrayList<>();
         spicyNHeatMenu.add(new FoodMenuItem("Yum Laab", "Spicy Thai Salad", 79, FoodMenuItem.Nation.THAI));
+        spicyNHeatMenu.add(new FoodMenuItem("Tom Yam Kung", "Spicy Thai Hot and Soup", 129, FoodMenuItem.Nation.THAI));
+        spicyNHeatMenu.add(new FoodMenuItem("Kimchi Jjigae", "Spicy korea Soup", 149, FoodMenuItem.Nation.KOREA));
         SpicyNHeat = new Restaurant("Spicy N Heat Isan Sabb", spicyNHeatMenu);
 
         // SweetSecret setup
         ArrayList<MenuItem> sweetSecretMenu = new ArrayList<>();
         sweetSecretMenu.add(new DessertMenuItem("Cake", "Chocolate Cake", 69, DessertMenuItem.DessertType.CAKE));
         sweetSecretMenu.add(new DessertMenuItem("Donut", "Glazed Donut", 19, DessertMenuItem.DessertType.DONUT));
+        sweetSecretMenu.add(new DessertMenuItem("Ice cream", "Vanila Ice cream",49, DessertMenuItem.DessertType.ICE_CREAM));
         SweetSecret = new Restaurant("SweetSecret Harmony Dessert", sweetSecretMenu);
 
         // IBrew setup
         ArrayList<MenuItem> iBrewMenu = new ArrayList<>();
-        iBrewMenu.add(new BeverageMenuItem("Coffee", "Espresso", 50, BeverageMenuItem.BeverageType.HOT));
+        iBrewMenu.add(new BeverageMenuItem("Coffee Espresso", "Espresso", 50, BeverageMenuItem.BeverageType.HOT));
+        iBrewMenu.add(new BeverageMenuItem("Coffee Latte ", "Latte", 50, BeverageMenuItem.BeverageType.HOT));
+        iBrewMenu.add(new BeverageMenuItem("Pepsi ", "pepsi", 20, BeverageMenuItem.BeverageType.ICED));
         IBrew = new Restaurant("IBrew Coffee", iBrewMenu);
 
         // SalmonHouse setup
@@ -56,6 +61,8 @@ public class FoodDeliveryApp {
         // NoodleHouse setup
         ArrayList<MenuItem> ManeeNoodleMenu = new ArrayList<>();
         ManeeNoodleMenu.add(new FoodMenuItem("Noodle", "Thai style Noodle", 60, FoodMenuItem.Nation.THAI));
+        ManeeNoodleMenu.add(new FoodMenuItem("Korea Noodle", "Korea style Noodle", 60, FoodMenuItem.Nation.KOREA));
+        ManeeNoodleMenu.add(new FoodMenuItem("Western Noodle", "Western style Noodle", 60, FoodMenuItem.Nation.WESTERN));
         ManeeNoodle = new Restaurant("Manee Me Noodle", ManeeNoodleMenu);
 
         restaurants.add(TastyBites);
@@ -103,67 +110,82 @@ public class FoodDeliveryApp {
         }
     }
     public static void main(String[] args) {
-
-        AppSetUp();
-
-        System.out.println("Welcome to Food Delivery App \n");
-        System.out.println("Available Restaurants:");
-        for (int i = 0; i < restaurants.size(); i++) {
-            System.out.println((i+1) + ". " + restaurants.get(i).getName());
-        }
-
-        System.out.print("\nPlease select a restaurant: ");
         Scanner scanner = new Scanner(System.in);
-
-        try {
-            int choice = scanner.nextInt();
-            
-            if (choice >= 1 && choice <= restaurants.size()) {
-                Restaurant selectedRestaurant = restaurants.get(choice - 1);
-                System.out.println("\nYou have selected: " + selectedRestaurant.getName());
-                selectedRestaurant.showMenus();
-
-                System.out.print("\nPlease select a menu item: ");
-                int menuChoice = scanner.nextInt();
-                scanner.nextLine();
     
-                System.out.print("Please enter the amount: ");
-                int amount = scanner.nextInt();
-                scanner.nextLine();
+        boolean continueOrdering = true;
     
-                MenuItem selectedItem = selectedRestaurant.getMenus().get(menuChoice - 1);
-                int totalPrice = selectedItem.getPrice() * amount;
-                System.out.printf("\nTotal Price: %d฿\n", totalPrice);
+        // Set up the restaurants only once outside the loop
+        AppSetUp();
     
-                System.out.print("Would you like to proceed to payment? (y/n): ");
-                String proceed = scanner.nextLine();
-    
-                if (proceed.equalsIgnoreCase("y")) {
-                    System.out.println("Payment successful. Thank you for your order!");
-
-                    System.out.print("Would you like a receipt? (y/n): ");
-                    String proceedReceipot = scanner.nextLine();
-
-                    if (proceedReceipot.equalsIgnoreCase("y")) {
-                        createReceipt(selectedRestaurant.getName(), selectedItem.getName(), selectedItem.getPrice());
-                        System.out.println("Receipt created successfully!");
-                    } else {
-                        System.out.println("Thank you for your purchase!");
-                    }
-                    
-                } else {
-                    System.out.println("Order cancelled.");
-                }
-
-            } else {
-                throw new InputMismatchException();
+        while (continueOrdering) {
+            System.out.println("Welcome to Food Delivery App \n");
+            System.out.println("Available Restaurants:");
+            for (int i = 0; i < restaurants.size(); i++) {
+                System.out.println((i + 1) + ". " + restaurants.get(i).getName());
             }
-        } catch (InputMismatchException e) {
-            System.out.println("Invalid input! Please enter a valid restaurant number.");
-        } finally {
-            scanner.close();
+    
+            System.out.print("\nPlease select a restaurant: ");
+            try {
+                int choice = scanner.nextInt();
+                scanner.nextLine();
+    
+                if (choice >= 1 && choice <= restaurants.size()) {
+                    Restaurant selectedRestaurant = restaurants.get(choice - 1);
+                    System.out.println("\nYou have selected: " + selectedRestaurant.getName());
+                    selectedRestaurant.showMenus();
+    
+                    System.out.print("\nPlease select a menu item: ");
+                    int menuChoice = scanner.nextInt();
+                    scanner.nextLine();
+    
+                    System.out.print("Please enter the amount: ");
+                    int amount = scanner.nextInt();
+                    scanner.nextLine();
+    
+                    MenuItem selectedItem = selectedRestaurant.getMenus().get(menuChoice - 1);
+                    int totalPrice = selectedItem.getPrice() * amount;
+                    System.out.printf("\nTotal Price: %d฿\n", totalPrice);
+    
+                    System.out.print("Would you like to proceed to payment? (y/n): ");
+                    String proceed = scanner.nextLine();
+    
+                    if (proceed.equalsIgnoreCase("y")) {
+                        System.out.println("Payment successful. Thank you for your order!");
+    
+                        System.out.print("Would you like a receipt? (y/n): ");
+                        String proceedReceipt = scanner.nextLine();
+    
+                        if (proceedReceipt.equalsIgnoreCase("y")) {
+                            createReceipt(selectedRestaurant.getName(), selectedItem.getName(), selectedItem.getPrice());
+                            System.out.println("Receipt created successfully!");
+                        } else {
+                            System.out.println("Thank you for your purchase!");
+                        }
+    
+                    } else {
+                        System.out.println("Order cancelled.");
+                    }
+    
+                } else {
+                    throw new InputMismatchException();
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input! Please enter a valid restaurant number.");
+            }
+    
+            System.out.print("\n ");
+            System.out.print(" \n");
+    
+            System.out.print("Would you like to order from another restaurant? (y/n): ");
+            String continueOrder = scanner.nextLine();
+    
+            if (!continueOrder.equalsIgnoreCase("y")) {
+                continueOrdering = false;
+            }
         }
+    
+        scanner.close();
+    }
+    
 
     }
-
-}
