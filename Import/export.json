@@ -1,0 +1,86 @@
+[
+    {
+        "name": "TastyBites Burger \u0026 Pizza Shack",
+        "menus": [
+            {
+                "nation": "WESTERN",
+                "name": "Pizza",
+                "description": "Classic Margherita Pizza",
+                "price": 99
+            },
+            {
+                "nation": "WESTERN",
+                "name": "Hamburger",
+                "description": "Juicy Beef Burger",
+                "price": 69
+            },
+            {
+                "nation": "NONE",
+                "name": "Salad",
+                "description": "Caesar Salad",
+                "price": 59
+            }
+        ]
+    },
+    {
+        "name": "Spicy N Heat Isan Sabb",
+        "menus": [
+            {
+                "nation": "THAI",
+                "name": "Yum Laab",
+                "description": "Spicy Thai Salad",
+                "price": 79
+            }
+        ]
+    },
+    {
+        "name": "SweetSecret Harmony Dessert",
+        "menus": [
+            {
+                "dessertType": "CAKE",
+                "name": "Cake",
+                "description": "Chocolate Cake",
+                "price": 69
+            },
+            {
+                "dessertType": "DONUT",
+                "name": "Donut",
+                "description": "Glazed Donut",
+                "price": 19
+            }
+        ]
+    },
+    {
+        "name": "IBrew Coffee",
+        "menus": [
+            {
+                "beverageType": "HOT",
+                "name": "Coffee",
+                "description": "Espresso",
+                "price": 50
+            }
+        ]
+    },
+    {
+        "name": "Salmon House",
+        "menus": [
+            {
+                "nation": "JAPANESE",
+                "name": "Salmon Rice",
+                "description": "Grilled Salmon with Rice",
+                "price": 129
+            }
+        ]
+    },
+    {
+        "name": "Manee Me Noodle",
+        "menus": [
+            {
+                "nation": "THAI",
+                "name": "Noodle",
+                "description": "Thai style Noodle",
+                "price": 60
+            }
+        ]
+    }
+]
