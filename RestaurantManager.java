@@ -30,6 +30,7 @@ public class RestaurantManager {
             try (BufferedWriter export = new BufferedWriter(new FileWriter(Paths.get(folderName, FileName).toString()))) {
                 String jsonString = gson.toJson(restaurants);
                 export.write(jsonString);
+                System.out.println("Restaurant Exported!");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -46,6 +47,7 @@ public class RestaurantManager {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(Paths.get(folderName, FileName).toString()))) {
             ArrayList<Restaurant> restaurants = gson.fromJson(reader, new TypeToken<ArrayList>(){}.getType());
+            System.out.println("Restaurant Imported!");
             return restaurants;
 
         } catch (IOException e) {

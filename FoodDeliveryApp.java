@@ -197,6 +197,9 @@ public class FoodDeliveryApp {
         System.out.println("Welcome to Food Delivery App");
         System.out.println("1. Show Avaiable Restaurant");
         System.out.println("2. Show all Menu Details");
+        System.out.println("3. Export Restaurants");
+        System.out.println("4. Import Restaurants");
+        System.out.println("5. Exit");
         System.out.print("Select : ");
         int choice = scanner.nextInt();
         scanner.nextLine();
@@ -212,6 +215,14 @@ public class FoodDeliveryApp {
                 break;
 
             case 3:
+                RestaurantManager.exportRestaurantData(restaurants);
+                break;
+
+            case 4:
+                RestaurantManager.importRestaurantData();
+                break;
+                
+            case 5:
                 currentState = AppState.Exit;
                 break;
         }
@@ -377,7 +388,7 @@ public class FoodDeliveryApp {
     public static void DisplayRestuarantPreview() {
         for (Restaurant restaurant : restaurants) {
             restaurant.showMenuPreview();
-            System.out.println(); // Add a blank line for better readability
+            System.out.println();
         }
 
         currentState = AppState.MainMenu;

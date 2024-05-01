@@ -30,6 +30,18 @@
                 "name": "Yum Laab",
                 "description": "Spicy Thai Salad",
                 "price": 79
+            },
+            {
+                "nation": "THAI",
+                "name": "Tom Yam Kung",
+                "description": "Spicy Thai Hot and Soup",
+                "price": 129
+            },
+            {
+                "nation": "KOREA",
+                "name": "Kimchi Jjigae",
+                "description": "Spicy korea Soup",
+                "price": 149
             }
         ]
     },
@@ -47,6 +59,12 @@
                 "name": "Donut",
                 "description": "Glazed Donut",
                 "price": 19
+            },
+            {
+                "dessertType": "ICE_CREAM",
+                "name": "Ice cream",
+                "description": "Vanila Ice cream",
+                "price": 49
             }
         ]
     },
@@ -55,9 +73,21 @@
         "menus": [
             {
                 "beverageType": "HOT",
-                "name": "Coffee",
+                "name": "Coffee Espresso",
                 "description": "Espresso",
                 "price": 50
+            },
+            {
+                "beverageType": "HOT",
+                "name": "Coffee Latte ",
+                "description": "Latte",
+                "price": 50
+            },
+            {
+                "beverageType": "ICED",
+                "name": "Pepsi ",
+                "description": "pepsi",
+                "price": 20
             }
         ]
     },
@@ -79,6 +109,18 @@
                 "nation": "THAI",
                 "name": "Noodle",
                 "description": "Thai style Noodle",
+                "price": 60
+            },
+            {
+                "nation": "KOREA",
+                "name": "Korea Noodle",
+                "description": "Korea style Noodle",
+                "price": 60
+            },
+            {
+                "nation": "WESTERN",
+                "name": "Western Noodle",
+                "description": "Western style Noodle",
                 "price": 60
             }
         ]
