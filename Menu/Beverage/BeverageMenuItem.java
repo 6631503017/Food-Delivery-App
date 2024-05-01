@@ -22,4 +22,10 @@ public class BeverageMenuItem extends MenuItem {
         return beverageType;
     }
 
+    @Override
+    public void printDetails() {
+        System.out.println("Beverage Menu Item Details:");
+        super.printDetails();
+    }
+
 }

@@ -27,4 +27,10 @@ public class FoodMenuItem extends MenuItem{
     public Nation getNation() {
         return nation;
     }
+
+    @Override
+    public void printDetails() {
+        System.out.println("Food Menu Item Details:");
+        super.printDetails();
+    }
 }

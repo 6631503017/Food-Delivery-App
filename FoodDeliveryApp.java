@@ -143,7 +143,7 @@ public class FoodDeliveryApp {
         MainMenu,
         DisplayRestuarant,
         CheckOut,
-        OrderHistory,
+        MenuDetails,
         Exit
     }
     
@@ -172,7 +172,8 @@ public class FoodDeliveryApp {
                         CheckOutPage();
                         break;
                     
-                    case OrderHistory:
+                    case MenuDetails:
+                        DisplayRestuarantPreview();
                         break;
 
                     case Exit:
@@ -195,9 +196,7 @@ public class FoodDeliveryApp {
 
         System.out.println("Welcome to Food Delivery App");
         System.out.println("1. Show Avaiable Restaurant");
-        System.out.println("2. Search Restaurant by Filter");
-        System.out.println("3. Show Ordered History");
-        System.out.println("4. Exit");
+        System.out.println("2. Show all Menu Details");
         System.out.print("Select : ");
         int choice = scanner.nextInt();
         scanner.nextLine();
@@ -207,14 +206,12 @@ public class FoodDeliveryApp {
             case 1:
                 currentState = AppState.DisplayRestuarant;
                 break;
+
             case 2:
+                currentState = AppState.MenuDetails;
                 break;
 
             case 3:
-                currentState = AppState.OrderHistory;
-                break;
-
-            case 4:
                 currentState = AppState.Exit;
                 break;
         }
@@ -375,6 +372,15 @@ public class FoodDeliveryApp {
             }
         } while (!isCheckout);
 
+    }
+
+    public static void DisplayRestuarantPreview() {
+        for (Restaurant restaurant : restaurants) {
+            restaurant.showMenuPreview();
+            System.out.println(); // Add a blank line for better readability
+        }
+
+        currentState = AppState.MainMenu;
     }
 
     static class SelectedMenuItem {

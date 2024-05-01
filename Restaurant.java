@@ -43,4 +43,11 @@ public class Restaurant {
 
     }
 
+    public void showMenuPreview() {
+        System.out.println("< " + getName() + " >");
+        for (MenuItem menuItem : menus) {
+            menuItem.printDetails();
+        }
+    }
+
 }

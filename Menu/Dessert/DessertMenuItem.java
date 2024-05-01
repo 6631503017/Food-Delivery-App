@@ -21,5 +21,11 @@ public class DessertMenuItem extends MenuItem{
     public DessertType getDessertType() {
         return dessertType;
     }
+
+    @Override
+    public void printDetails() {
+        System.out.println("Dessert Menu Details:");
+        super.printDetails();
+    }
  
 }

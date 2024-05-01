@@ -26,4 +26,10 @@ public class MenuItem {
     public int getPrice() {
         return price;
     }
+
+    public void printDetails() {
+        System.out.println("Name: " + name);
+        System.out.println(" Description: " + description);
+    }
+
 }
