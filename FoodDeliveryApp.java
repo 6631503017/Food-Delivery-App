@@ -5,7 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import Menu.MenuItem;
@@ -15,7 +18,10 @@ import Menu.Food.FoodMenuItem;
 
 public class FoodDeliveryApp {
     
+    private static AppState currentState;
+
     private static ArrayList<Restaurant> restaurants = new ArrayList<>();
+    private static ArrayList<SelectedMenuItem> basket = new ArrayList<>();
 
     private static Restaurant TastyBites;
     private static Restaurant SpicyNHeat;
@@ -73,7 +79,7 @@ public class FoodDeliveryApp {
         restaurants.add(ManeeNoodle);
     }
 
-    private static void createReceipt(String restaurantName, String menuItem, int price) {
+    private static void createReceipt(ArrayList<SelectedMenuItem> items) {
         String folderName = "receipt";
         String defaultFileName = "receipt_";
 
@@ -94,10 +100,33 @@ public class FoodDeliveryApp {
             }
             
             try (BufferedWriter receipt = new BufferedWriter(new FileWriter(Paths.get(folderName, fileName).toString()))) {
-                receipt.write("Restaurant: " + restaurantName + "\n");
-                receipt.write("Item: " + menuItem + "\n");
-                receipt.write("Price: " + price + "฿\n");
-                receipt.write("Thank you for your purchase!");
+                receipt.write("Order Receipt\n\n");
+
+                Map<Restaurant, List<SelectedMenuItem>> itemsByRestaurant = new HashMap<>();
+                for (SelectedMenuItem item : items) {
+                    itemsByRestaurant.computeIfAbsent(item.getRestaurant(), k -> new ArrayList<>()).add(item);
+                }
+
+                for (Map.Entry<Restaurant, List<SelectedMenuItem>> entry : itemsByRestaurant.entrySet()) {
+                    Restaurant restaurant = entry.getKey();
+                    List<SelectedMenuItem> restaurantItems = entry.getValue();
+
+                    receipt.write("Restaurant: " + restaurant.getName() + "\n");
+
+                    int restaurantTotalPrice = 0;
+                    for (SelectedMenuItem item : restaurantItems) {
+                        MenuItem menuItem = item.getMenuItem();
+                        int amount = item.getAmount();
+                        int totalPrice = item.getTotalPrice();
+                        restaurantTotalPrice += totalPrice;
+
+                        receipt.write("- " + menuItem.getName() + " (x" + amount + ") - " + totalPrice + "฿\n");
+                    }
+                    receipt.write("Total: " + restaurantTotalPrice + "฿\n\n");
+                }
+
+                int overallPrice = items.stream().mapToInt(SelectedMenuItem::getTotalPrice).sum();
+                receipt.write("Overall Price: " + overallPrice + "฿\n\n");
 
             } catch (IOException e) {
                 System.out.println("An error occurred while creating the receipt.");
@@ -109,83 +138,274 @@ public class FoodDeliveryApp {
             e.printStackTrace();
         }
     }
+    
+    public static enum AppState {
+        MainMenu,
+        DisplayRestuarant,
+        CheckOut,
+        OrderHistory,
+        Exit
+    }
+    
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-    
-        boolean continueOrdering = true;
-    
-        // Set up the restaurants only once outside the loop
+
+        //? Set up the restaurants
         AppSetUp();
+
+        currentState = AppState.MainMenu;
+        
+        try {
+
+            while (currentState != AppState.Exit)
+            {
+                switch (currentState)
+                {
+                    case MainMenu:
+                        MainPage();
+                        break;
+                    
+                    case DisplayRestuarant:
+                        DisplayRestuarantPage();
+                        break;
+                        
+                    case CheckOut:
+                        CheckOutPage();
+                        break;
+                    
+                    case OrderHistory:
+                        break;
+
+                    case Exit:
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+        } catch (InputMismatchException e) {
+            System.out.println("Error occur : Invalid input! Please try again.");
+        }
+    }
     
-        while (continueOrdering) {
-            System.out.println("Welcome to Food Delivery App \n");
+    
+
+    public static void MainPage() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to Food Delivery App");
+        System.out.println("1. Show Avaiable Restaurant");
+        System.out.println("2. Search Restaurant by Filter");
+        System.out.println("3. Show Ordered History");
+        System.out.println("4. Exit");
+        System.out.print("Select : ");
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+
+
+        switch (choice) {
+            case 1:
+                currentState = AppState.DisplayRestuarant;
+                break;
+            case 2:
+                break;
+
+            case 3:
+                currentState = AppState.OrderHistory;
+                break;
+
+            case 4:
+                currentState = AppState.Exit;
+                break;
+        }
+        System.out.println();
+
+    }
+    
+    public static void DisplayRestuarantPage() {
+            Scanner scanner = new Scanner(System.in);
+
             System.out.println("Available Restaurants:");
             for (int i = 0; i < restaurants.size(); i++) {
                 System.out.println((i + 1) + ". " + restaurants.get(i).getName());
             }
-    
+            System.out.println(restaurants.size()+1 + ". Checkout $");
+            System.out.println("0. Back to Main Menu");
+
             System.out.print("\nPlease select a restaurant: ");
-            try {
-                int choice = scanner.nextInt();
-                scanner.nextLine();
-    
-                if (choice >= 1 && choice <= restaurants.size()) {
-                    Restaurant selectedRestaurant = restaurants.get(choice - 1);
-                    System.out.println("\nYou have selected: " + selectedRestaurant.getName());
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            if (choice >= 0 && choice <= restaurants.size()+1) {
+
+                if (choice == 0) {
+                    currentState = AppState.MainMenu;
+                    return;
+                }
+
+                if (choice == restaurants.size() + 1) {
+                    currentState = AppState.CheckOut;
+                    return;
+                }
+
+                //? Display selected restaurant menu
+                Restaurant selectedRestaurant = restaurants.get(choice - 1);
+                System.out.println("\nYou have selected: " + selectedRestaurant.getName());
+                
+                boolean isOrdering = true;
+                while (isOrdering) {
                     selectedRestaurant.showMenus();
-    
-                    System.out.print("\nPlease select a menu item: ");
+
+                    //? Select Menu Item
+                    System.out.print("\nPlease select a menu item (0 to finish ordering): ");
                     int menuChoice = scanner.nextInt();
                     scanner.nextLine();
-    
+
+                    if (menuChoice == 0) {
+                        isOrdering = false;
+                        break;
+                    }
+
+                    if (menuChoice < 1 || menuChoice > selectedRestaurant.getMenus().size()) {
+                        System.out.println("Invalid menu selection. Please try again.");
+                        continue;
+                    }
+
+                    //? Enter Amount
                     System.out.print("Please enter the amount: ");
                     int amount = scanner.nextInt();
                     scanner.nextLine();
-    
+
+                    
+                    //? Display Menu and Price
                     MenuItem selectedItem = selectedRestaurant.getMenus().get(menuChoice - 1);
                     int totalPrice = selectedItem.getPrice() * amount;
                     System.out.printf("\nTotal Price: %d฿\n", totalPrice);
-    
-                    System.out.print("Would you like to proceed to payment? (y/n): ");
-                    String proceed = scanner.nextLine();
-    
-                    if (proceed.equalsIgnoreCase("y")) {
-                        System.out.println("Payment successful. Thank you for your order!");
-    
-                        System.out.print("Would you like a receipt? (y/n): ");
-                        String proceedReceipt = scanner.nextLine();
-    
-                        if (proceedReceipt.equalsIgnoreCase("y")) {
-                            createReceipt(selectedRestaurant.getName(), selectedItem.getName(), selectedItem.getPrice());
-                            System.out.println("Receipt created successfully!");
-                        } else {
-                            System.out.println("Thank you for your purchase!");
+
+                    basket.add(new SelectedMenuItem(selectedRestaurant, selectedItem, amount, totalPrice));
+                    System.out.println("Item added to basket.");
+
+                    do {
+                        System.out.print("\nContinue ordering from this restaurant? (y/n): ");
+                        String continueOrder = scanner.nextLine();
+                        if (continueOrder.equalsIgnoreCase("y")) {
+                            break;
+                        } else if (continueOrder.equalsIgnoreCase("n")) {
+                            isOrdering = false;
+                        }else {
+                            System.out.println("Invalid input, please try again.");
+                            continue;
                         }
-    
-                    } else {
-                        System.out.println("Order cancelled.");
-                    }
-    
-                } else {
-                    throw new InputMismatchException();
+                    } while(isOrdering);
+                    
                 }
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input! Please enter a valid restaurant number.");
+
+            }  else {
+                System.out.println("Invalid input, please try again.");
             }
-    
-            System.out.print("\n ");
-            System.out.print(" \n");
-    
-            System.out.print("Would you like to order from another restaurant? (y/n): ");
-            String continueOrder = scanner.nextLine();
-    
-            if (!continueOrder.equalsIgnoreCase("y")) {
-                continueOrdering = false;
-            }
-        }
-    
-        scanner.close();
     }
-    
+
+    public static void CheckOutPage() {
+        if (basket.isEmpty()) {
+            System.out.println("Your basket is empty.");
+            currentState = AppState.DisplayRestuarant;
+            return;
+        }
+
+        Map<Restaurant, List<SelectedMenuItem>> itemsByRestaurant = new HashMap<>();
+        for (SelectedMenuItem item : basket) {
+            Restaurant restaurant = item.getRestaurant();
+            itemsByRestaurant.computeIfAbsent(restaurant, k -> new ArrayList<>()).add(item);
+        }
+
+
+        System.out.println("\n[Basket Items]");
+        for (Map.Entry<Restaurant, List<SelectedMenuItem>> entry : itemsByRestaurant.entrySet()) {
+            Restaurant restaurant = entry.getKey();
+            List<SelectedMenuItem> items = entry.getValue();
+
+            System.out.println("\nRestaurant: " + restaurant.getName());
+            int restaurantTotalPrice = 0;
+            for (SelectedMenuItem item : items) {
+                MenuItem menuItem = item.getMenuItem();
+                int amount = item.getAmount();
+                int totalPrice = item.getTotalPrice();
+                restaurantTotalPrice += totalPrice;
+
+                System.out.printf("- %s (x%d) - %d฿\n", menuItem.getName(), amount, totalPrice);
+            }
+            System.out.printf("Total Price : %d฿\n", restaurantTotalPrice);
+        }
+
+
+        int overallPrice = basket.stream().mapToInt(SelectedMenuItem::getTotalPrice).sum();
+        System.out.printf("\nOverall Price: %d฿\n", overallPrice);
+
+
+        Scanner scanner = new Scanner(System.in);
+        boolean isCheckout = false;
+
+        do {
+            System.out.print("\nWould you like to proceed to checkout? (y/n): ");
+            String proceed = scanner.nextLine().trim().toLowerCase();
+        
+            if (proceed.equals("y")) {
+                isCheckout = true;
+                currentState = AppState.MainMenu;
+
+                System.out.println("Payment successful. Thank you for your order!");
+                System.out.println("Rider will quickly deliver your food to you.\n");
+        
+                System.out.print("Would you like a receipt? (y/n): ");
+                String proceedReceipt = scanner.nextLine().trim().toLowerCase();
+        
+                if (proceedReceipt.equals("y")) {
+                    createReceipt(basket);
+                    System.out.println("Receipt created successfully!");
+                } else {
+                    System.out.println("Thank you for your purchase!");
+                }
+                
+                System.out.println();
+                basket.clear();
+            } else if (!proceed.equals("n")) {
+                System.out.println("Invalid input. Please type 'y' or 'n'.");
+            } else {
+                System.out.println("Order cancelled.");
+            }
+        } while (!isCheckout);
 
     }
+
+    static class SelectedMenuItem {
+        private Restaurant restaurant;
+        private MenuItem menuItem;
+        private int amount;
+        private int totalPrice;
+
+        public SelectedMenuItem(Restaurant restaurant, MenuItem menuItem, int amount, int totalPrice) {
+            this.restaurant = restaurant;
+            this.menuItem = menuItem;
+            this.amount = amount;
+            this.totalPrice = totalPrice;
+        }
+
+        public Restaurant getRestaurant() {
+            return restaurant;
+        }
+
+        public MenuItem getMenuItem() {
+            return menuItem;
+        }
+
+        public int getAmount() {
+            return amount;
+        }
+
+        public int getTotalPrice() {
+            return totalPrice;
+        }
+
+        
+    }
+}
